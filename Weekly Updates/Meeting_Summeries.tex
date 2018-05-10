@@ -1,0 +1,20 @@
+\documentclass[a4paper]{article}
+
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+\title{Meeting Summaries}
+\author{Patrick Edwards}
+
+\begin{document}
+\maketitle
+
+\section{Friday, July 7, 2017}
+\subsection{Beginning Optical Photometry}
+This is the first installment of the weekly summary of the work completed during the Friday meetings.  This week, work was furthered on the photometry of the g image in the W0342 field.  The SDSS query was updated to reflect stars which were not saturated, and were not faint to the point that there was a necessary correction factor.  In the end there was 48 objects found using ccfind, of which 45 were applied to the fit.  It is important to remember to change the values in the datapars section of \textbf{phot} to be in accordance with the new images. \\
+After that, it was simply a matter of running \textbf{phot}, checking values, and then running \textbf{fitparams}.  There was an issue at first with this task, but the issue was that the values which it was trying to match were not labeled properly (fitting obj-10 to obj-11, obj-11 to obj-12, etc.).  As it turns out, once corrected, this fit was incredibly nice.  \\
+Going forward, I will continue to pull over full optical images from Poon's directory, and work on doing the photometry on the images.  As the astrometry for the W0342 r-band image is not good, I cannot involve a color term in the fit, but in other fields, I shall do what I can.
+
+\end{document}

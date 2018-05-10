@@ -1,0 +1,27 @@
+\documentclass[a4paper]{article}
+
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+\title{Weekly Update \#4}
+\author{Patrick Edwards}
+
+\begin{document}
+\date{Thursday, June 29, 2017}
+\maketitle
+
+\subsubsection{Current Status on Photometry}
+
+After my work with Ricky on Tuesday, and my vacation this weekend, I have been able to make some strides forward.  I was able to make a table with the data for the j- and k-band images containing a lot of pertinent information about each field (Name of field, date taken, number of usable stars, j- and k- zero-points/errors, airmass, temperature, pressure, range of magnitudes).  I made it as a .tsv file, assuming it will make it easier to use the data in the future.  \par
+As Ricky also saw last Tuesday, there is an apparent relation between the zero-points and temperature (graphs to be included later).  Excel is not much fun to work with, however that is the current platform for which the graphs are on.  There did not seem to be an initial dependence on the atmospheric pressure, however I plan to plot the residuals of the fit to temperature again pressure to see if there is a relation. (As of right now, approx. midnight Thursday, I have not done this.  Will try to have it tomorrow morning, Excel cooperating.)  I can also look into a dependence on airmass, if necessary.  \par
+For the photometry of the optical images, I have made some progress defining an SQL search, as well as chosen a field of stars to work on the b image.  However I have run into new and interesting problems, which as of right now i have not figured out how to solve.  
+\begin{itemize}
+\item The values of the b image, when using imexamine, are given as mostly decimals at or around 1, so I am not quite sure what to put for the background levels and minimum good values in phot.
+\item When trying to trim the .fits images, I have figured out how to operate imcopy, but the new images do not hold the WCS values, and so I cannot overlay a catalog.  \textim{This may not be too important of an issue, as I can still load the catalog on the full image.}
+\item The astrometry on the r image is not good, and so I cannot use ccfind to get the list of pixel coordinates for phot.  
+\end{itemize}
+Hopefully we can find solutions to some/all of these issues tomorrow morning, and I can keep plowing through this data.
+
+\end{document}

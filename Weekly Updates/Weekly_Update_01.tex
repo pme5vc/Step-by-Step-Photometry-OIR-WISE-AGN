@@ -1,0 +1,68 @@
+\documentclass[a4paper]{article}
+
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+\title{Weekly Update \#1}
+\author{Patrick Edwards}
+
+\begin{document}
+\date{Monday, May 22, 2017}
+\maketitle
+
+\begin{abstract}
+This weekend was focused on reading documentation on IRAF, as well as more specific documentation on using it for photometry, and using the apphot package.  While reading over these I was also tasked with messing around with an image using the tools I read over so that I can get a feel of the image viewing software.
+\end{abstract}
+
+\section{IRAF Documentation}
+In each section I will give a brief overview of what I pegged to be the most important aspects of each document.  In addition I will specify any areas I had problems following along with, where necessary.
+\subsection{The IRAF Data Reduction and Analysis System}
+The IRAF kernel is operated through use of the CL.  It is made up of packages with tasks, some of which are further subtasks, which can be executed to perform certain operations on images.  Have \textit{query mode} parameters and \textit{hidden mode} parameters.  Must load package, then have access to the tasks held within.  \\
+Different types of tasks:
+\begin{enumerate}
+\item \textbf{Builtin tasks} -- built in functions of the CL
+\item \textbf{Script tasks} -- interpreted CL procedures
+\item \textbf{Compiled tasks} -- basic IRAF tasks
+\item \textbf{Foreign tasks} -- tasks written outside of IRAF which are read in through the host
+\end{enumerate}
+Once the tasks are being executed, they are all equivalent in the eyes of the CL (\textit{task equivalence}).  Users can add new tasks or whole packages using declarations.  The noao. package contains most of the astronomy related tasks, most important to me the digiphot. subpackage, which contains tasks which can generate star lists automatically, perform aperture photometry, and perform photometry by through psf fitting.  Two other packages which I \textit{expect} were used were imred. and astrometry., which are packages for image reduction (bias, flat fielding, etc.), and finding accurate astrometric coordinates, respectively.  Detailed documentation on these packages must be found elsewhere.   \\ 
+The general idea is that one collection of processes and tasks will never be enough for everyone's precise purpose, so IRAF is adaptable, in that users can add their own software and tasks fairly easily (i.e. a \textit{programming environment}).  \\ 
+Programming in IRAF is done using the IRAF SPP (subset preprocessor), which is very similar to C but gets converted to Fortran for use in IRAF.  While writing a program in the SPP language itself may be easy, understanding how to integrate it into the IRAF environment is not so trivial.  There is a base Fortran interface (IMFORT), however it is primarily there for modifying imported Fortran code with minimal effort.  There isn't (at the time of the publication of the documentation in 1986) a Fortran interface for the user, however there is a C language interface, which include all the basic functions from \textit{<stdio.h>} and \textit{<ctype.h>} (I have never used this package so I am not quite sure what is in it).  \par 
+IRAF uses a virtual operating system to run, as opposed to just creating a library of tasks and using an existing OS.  This makes it more portable and adaptable.  There are many subsystems of the VOS, all of which have certain functions and their own documentation (I would think). \par 
+There is a \textit{bootlib} library which holds the bootstrap functions, most notable the \textit{mkpkg}, \textit{rmfiles}, and \textit{rmbin}.  
+
+\subsection{A User's Introduction to the IRAF Command Language (CL) - Introductory Chapters}
+To begin to run IRAF, first have to use the command \textbf{cl}, which looks for a file called \textit{login.cl}, which must be in the current directory.  To make the \textit{login.cl}  file and the $\backslash$uparm directory you simply type the command \textbf{mkiraf}.  This command can be done periodically to apply updates to IRAF, but will reset the $\backslash$uparm directory settings. \\
+After typing the \textbf{cl} command, welcome screen opens up, which shows the initial packages.  Load packages by typing the package name; unload by typing \textbf{bye}.  \textit{Note: Commands are case sensitive.  Standard commands are lowercase by default.} \\
+Important Commands:
+\begin{itemize}
+\item \textbf{help <package or task>} shows what certain tasks/packages do
+\item \textbf{page} lists page by page the details of a file
+\item \textbf{dir} shows contents of current package
+\item \textbf{bye}
+\end{itemize}
+You can also use any command you know for the specific OS you are using in IRAF by prefixing it with a "!".  To run a task, type its name, and it will ask for parameters needed to run the task.  You can enter a file with the parameters loaded or type STDIN and type the parameter in the command line.  You can edit parameter files with the command \textbf{edit <parameter file>}, which will open the default editor. When a task prints data to the screen, you can send it straight to a file of your choice by using the ">".  Similar to Linux, typing "\&" after a task will run it in the background.\\
+Can call tasks, as well as specify parameters and parameter files in the same line, as well as do multiple commands in one line using ; as a delimiter.  If you need multiple lines, put the commands in the form:\\
+<cl> \{ \\
+ > > > command1 \\
+ > > > command2 \\
+ > > > command3 \\
+ \} \\
+Sometimes you use quotes around strings of chars, but are not necessarily required in the command line.  \\
+You can view parameters by using the command \textbf{lpar <task>}, or bring them up to edit using the command \textbf{epar <task>}.  \\
+After these basic commands, I am essentially going to use this pdf as a reference, as opposed to reading the entire documentation.
+
+\subsection{Photometry Using IRAF}
+Begins by going over the basics of photometry.  Aperture method better for uncrowded fields; PSF fitting better for crowded fields.  The task \textit{Imexamine} is a general tool for viewing aspects of images, which is done using the \textbf{a} keystroke when viewing the parameters. \\
+The apphot package, located in \textit{noao.digiphot}, has many of the tasks for aperture photometry.  Lists of stars are found using the task \textbf{daofind}, and then photometry on the stars in the list is done using \textbf{[w/q/ ]phot}.  There are pset parameters for these files which must be checked and edited.  There are a few more tasks listed in this document which may be helpful to fixing the star list, and are given at the end of the last paragraph in the apphot section. \\
+For crowded field photometry, the main way of going about it is through the daophot package, which involves PSF fitting.  The tasks to do this are listed in the order one would use them, and is a slightly longer task than doing photometry on uncrowded field. \\
+Aperture corrections are made in the photcal package.  Apfile and Mkapfile plot the curve of growth of the objects in the magnitude file and compute the aperture corrections.  Mkapfile uses input from the file made from either phot or qphot, while apfile simply uses a text file with the same information.  These tasks both output a file which is the input to the tasks mknobsfile or mkobsfile.  These tasks make files which are acceptable input files for the fitting tasks.  This file is called the observation file.  A configuration file is also needed.  Help on these tasks can be found using the command \textbf{phelp config}.  You also must use the commmand \textbf{chkconfig} and have a catalog file for the standard stars.  Fitting is done with the task \textbf{fitparams}, and the coefficients of the fit are completed with either \textbf{evalfit} or \textbf{invertfit}.  More on any of these commands are found in their own documentation pages. \\
+In order to get more information on the package as a whole, use command \textbf{phelp pcintro}.
+
+\subsection{A User's Guide to IRAF's Apphot Package}
+I wasn't able to get to this document before I post this update on Sunday night, but I will do my best to read it in the morning.
+
+
+\end{document}

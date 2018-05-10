@@ -1,0 +1,36 @@
+\documentclass[a4paper]{article}
+
+\usepackage[a4paper,top=3cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+
+\title{Weekly Update \#2}
+\author{Patrick Edwards}
+
+\begin{document}
+\date{Friday, May 26, 2017}
+\maketitle
+
+In lieu of writing up a multiple page description of exactly what I did like last week, I will simply give an overview of the main points, to keep it compact.  Any important information will be noted either here, or in the Photometry Step-by-Step Guide, from here on out. In addition I am keeping brief, handwritten notes, for redundancy's sake.\\ \\
+During this week, I read more in depth the documentation for photometry using the daophot document as well as the document put forth from UCF.  Using these, Prof. Whittle and i were able to make some progress in getting the \textbf{phot} task to work.  In order to do this, we used batch mode, as opposed to interactive mode, and made coordinate files to use as input (using task \textbf{ccfind}; more on this in the updated Step-by-step guide).  \\ \\ 
+We also adjusted the apertures sizes used.  We had initially sizes of 1, 2, 3, 4, and 5.  However these were in units of arcseconds, and thus were much too large.  The annulus and dannulus parameters were also too large.  I changed the aperture sizes to: 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, the annulus inner radius to 4.0, with a width (dannulus) of 2.0.  \\ \\
+After doing this, Prof. Whittle and I were successfully getting results from \textbf{phot}, but the results we were getting were not agreeing with the calculated results we got simply by using $flux = 25 - 2.5log(counts)$.  We found that the equation used by \textbf{phot} to calculate the flux also includes a term $2.5log(itime)$.  This is put in to normalize the counts, to account for running \textbf{phot} on images with different exposure times, but since all our images have the same itime, it doesn't matter.  Solution: set itime = 1. \\ \\
+I then ran \textbf{phot} again on the J image and the K image, in a new directory named W0342\_final/.  Now in this directory I have: 
+\begin{itemize}
+\item image files
+\item mag files [W0342J.fits.mag.1 \& W0342K.fits.mag.1]
+\item catalog file from DS9 [2mass\_sel.tsv]
+\item coordinate file output from \textbf{ccfind} (method described in photom guide)
+\item coordinate files used as input for \textbf{phot} (in format: x y)
+\end{itemize}
+Now that I have gotten to this point, the next step was to make the files necessary to run \textbf{fitparams}, in the PHOTCAL package.  My goal was to make files similar to the ones Chris had which we had used to run it initially.  \\ \\
+The first file to make, according to the documentation, is the \textit{standcat} file.  This file contains the magnitudes straight from 2MASS, and the associated errors.  I could not find any way to make this automated, and so I made it by hand using the \textbf{mkcatalog} task in PHOTCAL.  Perhaps there is a better way, but as of right now I could not find it.  I then went on to make the file \textit{standobs}.  This comes from the task \textbf{mknobsfile}.  To do this I also needed the file \textit{standstars}, which is simply naming the field and the frames taken of it (full documentation in step-by-step guide).  I then used \textbf{mknobsfile} to make the file \textit{standobs}.  \\ \\
+The last file I need for \textbf{fitparams} is the configuration file.  Lucky for me, the first two parts of this file were made automatically from \textbf{mkcatalog} and \textbf{mknobsfile}, which have the same name as the generated files, except preceded by the letter 'f', and ended with '.dat'. \\ \\
+I made the final file \textit{config} to resemble the transformation file that Chris had made, using the fits for j1 and j2, k1 and k2.  I then input this file, and the fstandobs and fstandcat into the \textbf{mkconfig} task.  This then yielded the final file necessary for \textbf{fitparam}.  \\ \\
+I also added a README.txt in the directory, which tells what each file is, and how it was created.  I will also update the Step-by-Step Guide tomorrow to reflect what I have accomplished this week after our meeting.  
+
+
+
+
+\end{document}
